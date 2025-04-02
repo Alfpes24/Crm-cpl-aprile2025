@@ -8,12 +8,7 @@
 </head>
 <body>
     <div class="container">
-        <img src="" 
-             alt="" 
-             style="max-width: 250px; height: auto; display: block; margin: 20px auto;">
-        
         <h1>Calcolatore Prezzi CRM</h1>
-        
         <form id="calculator-form">
             <div class="form-group">
                 <label for="rooms">N° Stanze:</label>
@@ -34,15 +29,77 @@
                 <label for="additional-locations">Sedi aggiuntive:</label>
                 <input type="number" id="additional-locations" min="0" required>
             </div>
+            <div class="form-group">
+                <label for="noa">NOA:</label>
+                <input type="number" id="noa" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="noa-price">Prezzo di Vendita NOA:</label>
+                <select id="noa-price" required>
+                    <option value="29">29 euro</option>
+                    <option value="39">39 euro</option>
+                </select>
+            </div>
             <div class="output">
                 <label>Prezzo totale al mese:</label>
                 <span id="monthly-price">0</span>
                 <label>Setup Fee (UNA TANTUM):</label>
                 <span id="setup-fee">0</span>
+                <div class="sales-commissions-toggle">
+                    <label>
+                        <span id="alert-icon" style="cursor: pointer;">⚠️</span>
+                    </label>
+                    <div id="sales-commissions-box" style="display: none;">
+                        <span id="sales-commissions">0</span>
+                    </div>
+                </div>
             </div>
             <button type="button" id="calculate-btn">Calcola</button>
         </form>
     </div>
-    <script src="script.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const alertIcon = document.getElementById("alert-icon");
+            const commissionsBox = document.getElementById("sales-commissions-box");
+
+            alertIcon.addEventListener("click", () => {
+                commissionsBox.style.display = commissionsBox.style.display === "none" ? "block" : "none";
+            });
+
+            document.getElementById("calculate-btn").addEventListener("click", function () {
+                const rooms = parseInt(document.getElementById("rooms").value) || 0;
+                const doctors = parseInt(document.getElementById("doctors").value) || 0;
+                const cpl = parseInt(document.getElementById("cpl").value) || 0;
+                const additionalLocations = parseInt(document.getElementById("additional-locations").value) || 0;
+                const noa = parseInt(document.getElementById("noa").value) || 0;
+                const noaPrice = parseInt(document.getElementById("noa-price").value) || 0;
+
+                // Dati da file Excel
+                const setupFeeTable = [99, 129, 129, 159, 159, 199, 199, 299, 299, 499, 599];
+                const pricePerRoomTable = [270, 180, 160, 130, 110, 105, 95, 90, 85, 75, 70];
+
+                const index = rooms >= 11 ? 10 : Math.max(rooms - 1, 0);
+                const setupFee = setupFeeTable[index];
+                const monthlyPricePerRoom = pricePerRoomTable[index];
+                const monthlyPrice = monthlyPricePerRoom * rooms;
+
+                const locationsCost = additionalLocations * 99;
+                const noaTotalPrice = noa * noaPrice;
+
+                const totalMonthlyPrice = monthlyPrice + locationsCost + noaTotalPrice;
+
+                const commissionBase = monthlyPrice;
+                const commissionCpl = doctors * (cpl === 17 ? 8 : 6);
+                const commissionLocations = locationsCost;
+                const commissionNoa = noa * noaPrice;
+                const totalCommission = commissionBase + commissionCpl + commissionLocations + (setupFee / 12) + commissionNoa;
+
+                document.getElementById("monthly-price").textContent = `${totalMonthlyPrice.toFixed(2)} €`;
+                document.getElementById("setup-fee").textContent = `${setupFee.toFixed(2)} €`;
+                document.getElementById("sales-commissions").textContent = `${totalCommission.toFixed(2)} €`;
+            });
+        });
+    </script>
 </body>
 </html>
