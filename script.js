@@ -3,33 +3,36 @@ document.getElementById("calculate-btn").addEventListener("click", function () {
     const doctors = parseInt(document.getElementById("doctors").value) || 0;
     const cpl = parseInt(document.getElementById("cpl").value) || 0;
     const additionalLocations = parseInt(document.getElementById("additional-locations").value) || 0;
+    const noa = parseInt(document.getElementById("noa").value) || 0;
+    const noaPrice = parseInt(document.getElementById("noa-price").value) || 0;
 
-    const pricingTable = [
-        { rooms: 1, setup: 99, price: 270 },
-        { rooms: 2, setup: 129, price: 180 },
-        { rooms: 3, setup: 129, price: 160 },
-        { rooms: 4, setup: 159, price: 130 },
-        { rooms: 5, setup: 159, price: 110 },
-        { rooms: 6, setup: 199, price: 100 },
-        { rooms: 7, setup: 199, price: 100 },
-        { rooms: 8, setup: 199, price: 100 },
-        { rooms: 9, setup: 299, price: 95 },
-        { rooms: 10, setup: 499, price: 90 }
-    ];
+    // Nuove tabelle da Excel
+    const setupFeeTable = [99, 129, 129, 159, 159, 199, 199, 299, 299, 499, 599];
+    const pricePerRoomTable = [270, 180, 160, 130, 110, 105, 95, 90, 85, 75, 70];
 
-    let setupFee = 499;
-    let monthlyPricePerRoom = 90;
-
-    if (rooms >= 1 && rooms <= 10) {
-        const pricing = pricingTable.find(p => p.rooms === rooms);
-        if (pricing) {
-            setupFee = pricing.setup;
-            monthlyPricePerRoom = pricing.price;
-        }
-    }
-
+    const index = rooms >= 11 ? 10 : Math.max(rooms - 1, 0);
+    const setupFee = setupFeeTable[index];
+    const monthlyPricePerRoom = pricePerRoomTable[index];
     const monthlyPrice = monthlyPricePerRoom * rooms;
 
-    document.getElementById("monthly-price").textContent = `${monthlyPrice.toFixed(2)} €`;
+    // Additional locations cost
+    const locationsCost = additionalLocations * 99;
+
+    // NOA cost
+    const noaTotalPrice = noa * noaPrice;
+
+    // Total monthly price
+    const totalMonthlyPrice = monthlyPrice + locationsCost + noaTotalPrice;
+
+    // Sales commission calculation
+    const commissionBase = monthlyPrice;
+    const commissionCpl = doctors * (cpl === 17 ? 8 : 6);
+    const commissionLocations = locationsCost;
+    const commissionNoa = noa * noaPrice;
+
+    const totalCommission = commissionBase + commissionCpl + commissionLocations + (setupFee / 12) + commissionNoa;
+
+    document.getElementById("monthly-price").textContent = `${totalMonthlyPrice.toFixed(2)} €`;
     document.getElementById("setup-fee").textContent = `${setupFee.toFixed(2)} €`;
+    document.getElementById("sales-commissions").textContent = `${totalCommission.toFixed(2)} €`;
 });
