@@ -3,7 +3,6 @@ document.getElementById("calculate-btn").addEventListener("click", function () {
     const doctors = parseInt(document.getElementById("doctors").value) || 0;
     const cpl = parseInt(document.getElementById("cpl").value) || 0;
     const additionalLocations = parseInt(document.getElementById("additional-locations").value) || 0;
-    const noa = parseInt(document.getElementById("noa").value) || 0;
 
     const pricingTable = [
         { rooms: 1, setup: 99, price: 270 },
@@ -23,20 +22,14 @@ document.getElementById("calculate-btn").addEventListener("click", function () {
 
     if (rooms >= 1 && rooms <= 10) {
         const pricing = pricingTable.find(p => p.rooms === rooms);
-        setupFee = pricing.setup;
-        monthlyPricePerRoom = pricing.price;
+        if (pricing) {
+            setupFee = pricing.setup;
+            monthlyPricePerRoom = pricing.price;
+        }
     }
 
     const monthlyPrice = monthlyPricePerRoom * rooms;
 
-    const commissionBase = monthlyPrice;
-    const commissionCpl = doctors * (cpl === 17 ? 8 : 6);
-    const commissionLocations = additionalLocations * 99;
-    const commissionNoa = noa > 0 ? noa * 99 : 0;
-
-    const totalCommission = commissionBase + commissionCpl + commissionLocations + (setupFee / 12) + commissionNoa;
-
     document.getElementById("monthly-price").textContent = `${monthlyPrice.toFixed(2)} €`;
     document.getElementById("setup-fee").textContent = `${setupFee.toFixed(2)} €`;
-    document.getElementById("sales-commissions").textContent = `${totalCommission.toFixed(2)} €`;
 });
