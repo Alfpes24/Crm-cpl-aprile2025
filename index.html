@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <img src="https://www.miodottore.it/img/it/logo/logo-default-it.svg?v=4" alt="Una bella immagine" style="display: block; margin: 0 auto; width: 300px;">
+    <title>Calcolatore Prezzi CRM</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -28,11 +29,24 @@
                 <label for="additional-locations">Sedi aggiuntive:</label>
                 <input type="number" id="additional-locations" min="0" required>
             </div>
+            <div class="form-group">
+                <label for="noa">NOA:</label>
+                <input type="number" id="noa" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="noa-price">Prezzo di Vendita NOA:</label>
+                <select id="noa-price" required>
+                    <option value="29">29 euro</option>
+                    <option value="39">39 euro</option>
+                </select>
+            </div>
             <div class="output">
                 <label>Prezzo totale al mese:</label>
                 <span id="monthly-price">0</span>
                 <label>Setup Fee (UNA TANTUM):</label>
                 <span id="setup-fee">0</span>
+                <label>Calcolo Commissioni Sale:</label>
+                <span id="sales-commissions">0</span>
             </div>
             <button type="button" id="calculate-btn">Calcola</button>
         </form>
